@@ -1,0 +1,31 @@
+// Configure debug launch settings
+{
+    "version": "0.2.0",
+    "projectName": "qb20-lorawan",
+    "configurations": [
+        {
+            // "showDevDebugOutput": "raw",
+            "name": "jlink debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/Debug/${workspaceFolderBasename}.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "jlink",
+            "serverpath": "C:/Program Files/SEGGER/JLink/JLinkGDBServerCL.exe",
+            "device": "STM32L476VG",
+            "interface": "swd",
+            "svdPath": "${workspaceFolder}/Device/STM32L476.svd",
+            "runToEntryPoint": "main",
+            "overrideResetCommands": ["monitor reset halt"],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 1
+            },
+            "preLaunchCommands": [
+                "show charset",
+                "set auto-load safe-path /",
+                "set print pretty",
+            ]
+        }
+    ]
+}

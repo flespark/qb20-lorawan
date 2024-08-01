@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			// TODO:
+			"label": "Flash firmware by jlink",
+			"type": "shell",
+			"command": "JRun.exe -device STM32L476VG -if SWD -speed 4000 --quit ./build/qb20-lorawan.elf",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+            "problemMatcher": []
+		}
+	]
+}

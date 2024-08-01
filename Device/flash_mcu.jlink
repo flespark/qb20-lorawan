@@ -1,0 +1,7 @@
+si swd
+speed 4000
+device STM32L476VG
+loadfile ./build/Debug/qb20-lorawan.bin 0x8000000
+r
+g
+q

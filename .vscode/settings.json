@@ -1,0 +1,84 @@
+{
+    "search.useIgnoreFiles": false,
+    "search.quickOpen.history.filterSortOrder": "recency",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/node_modules": true,
+        "**/tmp": true,
+        "**/temp": true,
+        "**/AppData/Local/Temp": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "**/tmp": true,
+        "**/temp": true,
+        "**/AppData/Local/Temp": true,
+        "**/.cache": true,
+        "**/CMakeFiles": true,
+        "build/": true,
+        "test/": true,
+    },
+    "cmake.configureArgs": [
+        "-DPROJECT_NAME=${workspaceFolderBasename}"
+    ],
+    "clangd.arguments": [
+        "--log=verbose",
+        "--clang-tidy",
+        "--pretty",
+        "--all-scopes-completion",
+        "--completion-style=bundled",
+        "--cross-file-rename",
+        "--header-insertion=iwyu",
+        "--header-insertion-decorators",
+        "--background-index",
+        "--compile-commands-dir=${workspaceFolder}/build",
+    ],
+    "C/C++ Include Guard.Auto Include Guard Insertion For New File": true,
+    "C/C++ Include Guard.Macro Type": "Filename",
+    "C/C++ Include Guard.Prefix": "__",
+    "C/C++ Include Guard.Remove Extension": false,
+    "C/C++ Include Guard.Comment Style": "Block",
+    "C/C++ Include Guard.Header Extensions": [
+        ".h",
+        ".hpp",
+        ".h++",
+        ".hh"
+    ],
+    "cortex-debug.variableUseNaturalFormat": true,
+    // "terminal.integrated.gpuAcceleration": "canvas"
+    "actionButtons": {
+        // available icon: https://code.visualstudio.com/api/references/icons-in-labels
+        // "defaultColor": "orange",
+        "reloadButton": null,
+        "commands": [
+            {
+                "name": "$(zap)Flash",
+                "singleInstance": true,
+                "focus": true,
+                "terminalName": "JLink Flash",
+                "command": "JLink -CommanderScript ${workspaceFolder}/Device/flash_mcu.jlink",
+            },
+            {
+                "name": "$(debug-restart)Reset",
+                "singleInstance": true,
+                "focus": true,
+                "terminalName": "JLink Reset",
+                "command": "JLink -CommanderScript ${workspaceFolder}/Device/reset_mcu.jlink",
+            },
+            {
+                "name": "$(trash)Erase",
+                "singleInstance": true,
+                "focus": true,
+                "terminalName": "JLink Erase",
+                "command": "JLink -CommanderScript ${workspaceFolder}/Device/erase_mcu.jlink",
+            }
+        ]
+    }
+}
