@@ -51,6 +51,7 @@
 #include "smtc_hal_spi.h"
 #include "smtc_hal_lp_timer.h"
 #include "smtc_hal_watchdog.h"
+#include "smtc_modem_hal_dbg_trace.h"
 
 #if( MODEM_HAL_DBG_TRACE == MODEM_HAL_FEATURE_ON )
 #include <stdarg.h>

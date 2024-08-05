@@ -26,6 +26,75 @@
                 "set auto-load safe-path /",
                 "set print pretty",
             ]
+        },
+        {
+            "name": "stlink debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/Debug/${workspaceFolderBasename}.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "stlink",
+            "interface": "swd",
+            "svdPath": "${workspaceFolder}/Device/STM32L476.svd",
+            "runToEntryPoint": "main",
+            "overrideResetCommands": ["monitor reset halt"],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 1
+            },
+            "preLaunchCommands": [
+                "show charset",
+                "set auto-load safe-path /",
+                "set print pretty",
+            ]
+        },
+        {
+            "name": "openocd debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/Debug/${workspaceFolderBasename}.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "interface": "swd",
+            "device": "STM32L476VGTX",
+            "svdPath": "${workspaceFolder}/Device/STM32L476.svd",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32l4x.cfg"
+            ],
+            "runToEntryPoint": "main",
+            "overrideResetCommands": ["monitor reset halt"],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "preLaunchCommands": [
+                "show charset",
+                "set auto-load safe-path /",
+                "set print pretty",
+            ]
+        },
+        {
+            "name": "pyocd debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/Debug/${workspaceFolderBasename}.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "pyocd",
+            "interface": "swd",
+            "device": "STM32L476VGTX",
+            "svdPath": "${workspaceFolder}/Device/STM32L476.svd",
+            "runToEntryPoint": "main",
+            "overrideResetCommands": ["monitor reset halt"],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "preLaunchCommands": [
+                "show charset",
+                "set auto-load safe-path /",
+                "set print pretty",
+            ]
         }
     ]
 }

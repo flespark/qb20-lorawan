@@ -110,19 +110,18 @@ void hal_lp_timer_init( hal_lp_timer_id_t id )
 
 void hal_lp_timer_start( hal_lp_timer_id_t id, const uint32_t milliseconds, const hal_lp_timer_irq_t* tmr_irq )
 {
-    uint32_t delay_ms_2_tick = 0;
-
     // Remark LSE_VALUE / LPTIM_PRESCALER_DIV16
-    delay_ms_2_tick = ( uint32_t ) ( ( ( uint64_t ) milliseconds * ( LSE_VALUE >> 4 ) ) / 1000 );
+    uint32_t tick = (milliseconds / 1000) * ( LSE_VALUE >> 4 );
+    uint32_t remainder = (milliseconds % 1000) * ( LSE_VALUE >> 4 );
+    tick += (remainder + 500) / 1000;
 
-    // check if delay_ms_2_tick is not greater than 0xFFFF and clamp it if it is the case
-    if( delay_ms_2_tick > 0xFFFF )
+    if( tick > 0xFFFF )
     {
-        delay_ms_2_tick = 0xFFFF;
+        tick = 0xFFFF;
     }
 
     // Auto reload period is set to max value 0xFFFF
-    HAL_LPTIM_TimeOut_Start_IT( &lptim_handle[id], 0xFFFF, delay_ms_2_tick );
+    HAL_LPTIM_TimeOut_Start_IT( &lptim_handle[id], 0xFFFF, tick );
     lptim_tmr_irq[id] = *tmr_irq;
 }
 

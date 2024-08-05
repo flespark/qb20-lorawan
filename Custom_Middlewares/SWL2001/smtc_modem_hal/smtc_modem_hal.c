@@ -433,6 +433,8 @@ void smtc_modem_hal_set_ant_switch( bool is_tx_on )
 {
 #if defined( SX127X )
     hal_gpio_set_value( RADIO_ANTENNA_SWITCH, ( is_tx_on == true ) ? 1 : 0 );
+#elif defined( SX126X )
+    hal_gpio_set_value( SX126X_RADIO_RF_SWITCH_CTRL, ( is_tx_on == true ) ? 0 : 1 );
 #endif
 }
 

@@ -408,7 +408,7 @@ static void send_uplink_counter_on_port( uint8_t port )
 #define ENABLE_TEST_FLASH 0  // Enable flash porting test BUT disable other porting tests
 
 // Delay introduced by HAL_LPTIM_TimeOut_Start_IT function of stm32l4xx_hal_lptim.c file
-#define BOARD_COMPENSATION_IN_MS 0
+#define BOARD_COMPENSATION_IN_MS 6
 
 #define NB_LOOP_TEST_SPI 2
 #define NB_LOOP_TEST_CONFIG_RADIO 2
@@ -566,14 +566,8 @@ void main_porting_tests( void )
 {
     bool ret = true;
 
-    // Disable IRQ to avoid unwanted behaviour during init
-    hal_mcu_disable_irq( );
-
     // Configure all the µC periph (clock, gpio, timer, ...)
     hal_mcu_init( );
-
-    // Re-enable IRQ
-    hal_mcu_enable_irq( );
 
     // Tests
     SMTC_HAL_TRACE_MSG( "\n\n\nPORTING_TEST example is starting \n\n" );
@@ -589,6 +583,8 @@ void main_porting_tests( void )
         return;
 
     ret = porting_test_get_time( );
+    if( ret == false )
+        return;
 
     ret = porting_test_timer_irq( );
     if( ret == false )
@@ -783,7 +779,7 @@ static bool reset_init_radio( void )
     }
 
     status = ral_set_sleep( &( modem_radio.ral ), true );
-    smtc_modem_hal_set_ant_switch( false );
+    smtc_modem_hal_set_ant_switch( true );
     if( status != RAL_STATUS_OK )
     {
         PORTING_TEST_MSG_NOK( " ral_set_sleep() function failed \n" );
@@ -1134,6 +1130,7 @@ static bool porting_test_timer_irq( void )
         // Do nothing
     }
 
+    // FIXME: lptime inaccuracy
     smtc_modem_hal_start_timer( timer_ms, timer_irq_callback,
                                 NULL );  // Warning this function takes ~3,69 ms for STM32L4
 

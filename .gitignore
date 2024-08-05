@@ -60,3 +60,7 @@ build_*/
 tmp/
 temp/
 Backup/
+
+# reference document
+ref/
+doc/

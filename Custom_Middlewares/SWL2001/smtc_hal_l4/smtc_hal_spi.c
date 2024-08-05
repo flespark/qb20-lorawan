@@ -47,6 +47,7 @@
 
 #include "modem_pinout.h"
 #include "smtc_hal_mcu.h"
+#include "main.h"
 
 /*
  * -----------------------------------------------------------------------------
@@ -91,6 +92,26 @@ static spi_t spi_periph[] = {
                     .sclk = NC,
                 },
         },
+        {
+            .interface = SPI2,
+            .handle    = {0},
+            .pins =
+                {
+                    .mosi = NC,
+                    .miso = NC,
+                    .sclk = NC,
+                },
+        },
+        {
+            .interface = SPI3,
+            .handle    = {0},
+            .pins =
+                {
+                    .mosi = NC,
+                    .miso = NC,
+                    .sclk = NC,
+                },
+        },
 }
 ;
 
@@ -107,7 +128,7 @@ static spi_t spi_periph[] = {
 void hal_spi_init( const uint32_t id, const hal_gpio_pin_names_t mosi, const hal_gpio_pin_names_t miso,
                    const hal_gpio_pin_names_t sclk )
 {
-    assert_param( ( id > 0 ) && ( ( id - 1 ) < sizeof( spi_periph ) ) );
+    assert_param( ( id > 0 ) && ( ( id - 1 ) < (sizeof( spi_periph ) / sizeof( spi_periph[0] )) ) );
     uint32_t local_id = id - 1;
 
     spi_periph[local_id].handle.Instance               = spi_periph[local_id].interface;
@@ -136,7 +157,7 @@ void hal_spi_init( const uint32_t id, const hal_gpio_pin_names_t mosi, const hal
 
 void hal_spi_de_init( const uint32_t id )
 {
-    assert_param( ( id > 0 ) && ( ( id - 1 ) < sizeof( spi_periph ) ) );
+    assert_param( ( id > 0 ) && ( ( id - 1 ) < (sizeof( spi_periph ) / sizeof( spi_periph[0] )) ) );
     uint32_t local_id = id - 1;
 
     HAL_SPI_DeInit( &spi_periph[local_id].handle );
@@ -144,7 +165,7 @@ void hal_spi_de_init( const uint32_t id )
 
 uint16_t hal_spi_in_out( const uint32_t id, const uint16_t out_data )
 {
-    assert_param( ( id > 0 ) && ( ( id - 1 ) < sizeof( spi_periph ) ) );
+    assert_param( ( id > 0 ) && ( ( id - 1 ) < (sizeof( spi_periph ) / sizeof( spi_periph[0] )) ) );
     uint32_t local_id = id - 1;
 
     while( LL_SPI_IsActiveFlag_TXE( spi_periph[local_id].interface ) == 0 )
@@ -169,24 +190,54 @@ void HAL_SPI_MspInit( SPI_HandleTypeDef* spiHandle )
             .Alternate = GPIO_AF5_SPI1,
         };
         // Miso
-        hal_gpio_enable_clock( spi_periph[0].pins.miso );
-        GPIO_TypeDef* gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[0].pins.miso & 0xF0 ) << 6 ) );
-        gpio.Pin                = ( 1 << ( spi_periph[0].pins.miso & 0x0F ) );
+        hal_gpio_enable_clock( spi_periph[2].pins.miso );
+        GPIO_TypeDef* gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[2].pins.miso & 0xF0 ) << 6 ) );
+        gpio.Pin                = ( 1 << ( spi_periph[2].pins.miso & 0x0F ) );
         HAL_GPIO_Init( gpio_port, &gpio );
 
         // Mosi
-        hal_gpio_enable_clock( spi_periph[0].pins.mosi );
-        gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[0].pins.mosi & 0xF0 ) << 6 ) );
-        gpio.Pin  = ( 1 << ( spi_periph[0].pins.mosi & 0x0F ) );
+        hal_gpio_enable_clock( spi_periph[2].pins.mosi );
+        gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[2].pins.mosi & 0xF0 ) << 6 ) );
+        gpio.Pin  = ( 1 << ( spi_periph[2].pins.mosi & 0x0F ) );
         HAL_GPIO_Init( gpio_port, &gpio );
 
         // Sclk
-        hal_gpio_enable_clock( spi_periph[0].pins.sclk );
-        gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[0].pins.sclk & 0xF0 ) << 6 ) );
-        gpio.Pin  = ( 1 << ( spi_periph[0].pins.sclk & 0x0F ) );
+        hal_gpio_enable_clock( spi_periph[2].pins.sclk );
+        gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[2].pins.sclk & 0xF0 ) << 6 ) );
+        gpio.Pin  = ( 1 << ( spi_periph[2].pins.sclk & 0x0F ) );
         HAL_GPIO_Init( gpio_port, &gpio );
 
         __HAL_RCC_SPI1_CLK_ENABLE( );
+    } else if ( spiHandle->Instance == spi_periph[1].interface ) {
+        // unimplemented
+        Error_Handler();
+    } else if ( spiHandle->Instance == spi_periph[2].interface ) {
+        GPIO_InitTypeDef gpio = {
+            .Mode      = GPIO_MODE_AF_PP,
+            .Pull      = GPIO_NOPULL,
+            .Speed     = GPIO_SPEED_HIGH,
+            .Alternate = GPIO_AF6_SPI3,
+        };
+        // Miso
+        hal_gpio_enable_clock( spi_periph[2].pins.miso );
+        GPIO_TypeDef* gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[2].pins.miso & 0xF0 ) << 6 ) );
+        gpio.Pin                = ( 1 << ( spi_periph[2].pins.miso & 0x0F ) );
+        HAL_GPIO_Init( gpio_port, &gpio );
+
+        // Mosi
+        hal_gpio_enable_clock( spi_periph[2].pins.mosi );
+        gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[2].pins.mosi & 0xF0 ) << 6 ) );
+        gpio.Pin  = ( 1 << ( spi_periph[2].pins.mosi & 0x0F ) );
+        HAL_GPIO_Init( gpio_port, &gpio );
+
+        // Sclk
+        hal_gpio_enable_clock( spi_periph[2].pins.sclk );
+        gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[2].pins.sclk & 0xF0 ) << 6 ) );
+        gpio.Pin  = ( 1 << ( spi_periph[2].pins.sclk & 0x0F ) );
+        HAL_GPIO_Init( gpio_port, &gpio );
+
+        __HAL_RCC_SPI3_CLK_ENABLE( );
+
     }
     else
     {
@@ -220,6 +271,33 @@ void HAL_SPI_MspDeInit( SPI_HandleTypeDef* spiHandle )
 
         gpio.Pin  = ( 1 << ( spi_periph[0].pins.sclk & 0x0F ) );
         gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[0].pins.sclk & 0xF0 ) << 6 ) );
+        HAL_GPIO_Init( gpio_port, &gpio );
+    } else if ( spiHandle->Instance == spi_periph[1].interface ) {
+        // unimplemented
+        Error_Handler();
+    } else if ( spiHandle->Instance == spi_periph[2].interface ) {
+        __HAL_RCC_SPI3_CLK_DISABLE( );
+
+        GPIO_InitTypeDef gpio = {
+            .Speed     = GPIO_SPEED_LOW,
+        };
+
+        // put miso in Analog mode
+        GPIO_TypeDef* gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[2].pins.miso & 0xF0 ) << 6 ) );
+        gpio.Mode               = GPIO_MODE_ANALOG;
+        gpio.Pull               = GPIO_NOPULL;
+        gpio.Pin                = ( 1 << ( spi_periph[2].pins.miso & 0x0F ) );
+        HAL_GPIO_Init( gpio_port, &gpio );
+
+        // put mosi and sclk in input pull down mode
+        gpio.Mode = GPIO_MODE_INPUT;
+        gpio.Pull = GPIO_PULLDOWN;
+        gpio.Pin  = ( 1 << ( spi_periph[2].pins.mosi & 0x0F ) );
+        gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[2].pins.mosi & 0xF0 ) << 6 ) );
+        HAL_GPIO_Init( gpio_port, &gpio );
+
+        gpio.Pin  = ( 1 << ( spi_periph[2].pins.sclk & 0x0F ) );
+        gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( spi_periph[2].pins.sclk & 0xF0 ) << 6 ) );
         HAL_GPIO_Init( gpio_port, &gpio );
     }
     else

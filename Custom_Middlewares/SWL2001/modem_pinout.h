@@ -31,8 +31,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __MODEM_PIN_NAMES_H__
-#define __MODEM_PIN_NAMES_H__
+#ifndef __MODEM_PINOUT_H
+#define __MODEM_PINOUT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -102,8 +102,12 @@ extern "C" {
 #endif
 
 
-/* left up key */
-#define EXTI_BUTTON             PB_15
+/* qb20 evk left up key */
+#define QB20_EVK_K1             PB_15
+// #define QB20_EVK_K2             PD_8
+// #define QB20_EVK_K3             PD_9
+
+#define EXTI_BUTTON             QB20_EVK_K1
 
 //Hw modem specific pinout
 #define HW_MODEM_COMMAND_PIN    PC_6
@@ -124,6 +128,6 @@ extern "C" {
  */
 #ifdef __cplusplus
 }
-#endif
+#endif /* __MODEM_PINOUT_H */
 
 #endif  //__MODEM_PIN_NAMES_H__

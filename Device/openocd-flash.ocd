@@ -1,0 +1,5 @@
+init
+reset halt
+flash write_image erase unlock ./build/Debug/qb20-lorawan.bin 0x8000000
+reset run
+shutdown

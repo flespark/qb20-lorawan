@@ -15,11 +15,11 @@ target_compile_definitions(${DRIVER_PROJECT_NAME} INTERFACE
     SX126X
     SX1262
     RP2_103 # Regional Parameter
-    # REGION_AS_923
-    # REGION_AU_915
+    REGION_AS_923
+    REGION_AU_915
     # REGION_CN_470
     # REGION_CN_470_RP_1_0
-    # REGION_EU_868
+    REGION_EU_868
     # REGION_IN_865
     # REGION_KR_920
     # REGION_RU_864
@@ -56,11 +56,11 @@ file(GLOB DRIVER_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/lr1_stack_mac_layer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/services/smtc_duty_cycle.c
     ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/services/smtc_lbt.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_as_923.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_au_915.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_as_923.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_au_915.c
     # ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_cn_470.c
     # ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_cn_470_rp_1_0.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_eu_868.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_eu_868.c
     # ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_in_865.c
     # ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_kr_920.c
     # ${CMAKE_CURRENT_SOURCE_DIR}/lbm_lib/smtc_modem_core/lr1mac/src/smtc_real/src/region_ru_864.c

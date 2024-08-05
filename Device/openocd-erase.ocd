@@ -1,0 +1,5 @@
+init
+reset halt
+flash erase_sector 0 0 last
+reset run
+shutdown
