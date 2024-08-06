@@ -15,3 +15,7 @@ SWL2001 porting for Lierda QB20 EVK, basic lorawan feature support, developing o
 3. Open repo as folder in VSCode, install recommanded extension, cmake build, flash and debug by bottom click:
 
    .![img](./doc/image/vscode-action-button.png)
+
+# Note
+
+Maybe need full erase MCU flash before flashing because NVM context will cause join fail when used gateway not compatible newest LoRaWAN specification.
