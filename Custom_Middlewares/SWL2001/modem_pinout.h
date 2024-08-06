@@ -104,10 +104,8 @@ extern "C" {
 
 /* qb20 evk left up key */
 #define QB20_EVK_K1             PB_15
-// #define QB20_EVK_K2             PD_8
-// #define QB20_EVK_K3             PD_9
-
-#define EXTI_BUTTON             QB20_EVK_K1
+#define QB20_EVK_K2             PD_8
+#define QB20_EVK_K3             PD_9
 
 //Hw modem specific pinout
 #define HW_MODEM_COMMAND_PIN    PC_6

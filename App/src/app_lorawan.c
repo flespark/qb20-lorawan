@@ -136,7 +136,8 @@ static uint8_t                  rx_payload_size = 0;      // Size of the payload
 static smtc_modem_dl_metadata_t rx_metadata     = { 0 };  // Metadata of downlink
 static uint8_t                  rx_remaining    = 0;      // Remaining downlink payload in modem
 
-static volatile bool user_button_is_press = false;  // Flag for button status
+static volatile bool k1_button_is_press = false;  // Flag for button status
+static volatile bool k2_button_is_press = false;  // Flag for button status
 static uint32_t      uplink_counter       = 0;      // uplink raising counter
 
 #if defined( USE_RELAY_TX )
@@ -360,9 +361,9 @@ static void modem_event_callback( void )
     } while( event_pending_count > 0 );
 }
 
-void user_button_callback(void * context)
+void k1_button_callback(void * context)
 {
-    SMTC_HAL_TRACE_INFO( "Button pushed\n" );
+    SMTC_HAL_TRACE_INFO( "K1 Button pushed\n" );
 
     ( void ) context;  // Not used in the example - avoid warning
 
@@ -372,7 +373,23 @@ void user_button_callback(void * context)
     if( ( int32_t ) ( smtc_modem_hal_get_time_in_ms( ) - last_press_timestamp_ms ) > 500 )
     {
         last_press_timestamp_ms = smtc_modem_hal_get_time_in_ms( );
-        user_button_is_press    = true;
+        k1_button_is_press    = true;
+    }
+}
+
+void k2_button_callback(void * context)
+{
+    SMTC_HAL_TRACE_INFO( "K2 Button pushed\n" );
+
+    ( void ) context;  // Not used in the example - avoid warning
+
+    static uint32_t last_press_timestamp_ms = 0;
+
+    // Debounce the button press, avoid multiple triggers
+    if( ( int32_t ) ( smtc_modem_hal_get_time_in_ms( ) - last_press_timestamp_ms ) > 500 )
+    {
+        last_press_timestamp_ms = smtc_modem_hal_get_time_in_ms( );
+        k2_button_is_press    = true;
     }
 }
 
@@ -1919,6 +1936,7 @@ static void timer_irq_callback( void* obj )
 void main_periodical_uplink( void )
 {
     uint32_t sleep_time_ms = 0;
+    smtc_modem_status_mask_t status_mask = 0;
 
     // Disable IRQ to avoid unwanted behavior during init
     hal_mcu_disable_irq( );
@@ -1931,12 +1949,19 @@ void main_periodical_uplink( void )
     smtc_modem_init( &modem_event_callback );
 
     // Configure Nucleo blue button as EXTI
-    hal_gpio_irq_t nucleo_blue_button = {
-        .pin      = EXTI_BUTTON,
+    hal_gpio_irq_t qb20_evk_k1 = {
+        .pin      = QB20_EVK_K1,
         .context  = NULL,                  // context pass to the callback - not used in this example
-        .callback = user_button_callback,  // callback called when EXTI is triggered
+        .callback = k1_button_callback,  // callback called when K1 is pressed
     };
-    hal_gpio_init_in( EXTI_BUTTON, BSP_GPIO_PULL_MODE_NONE, BSP_GPIO_IRQ_MODE_FALLING, &nucleo_blue_button );
+    hal_gpio_irq_t qb20_evk_k2 = {
+        .pin      = QB20_EVK_K2,
+        .context  = NULL,                  // context pass to the callback - not used in this example
+        .callback = k2_button_callback,  // callback called when K2 is pressed
+    };
+
+    hal_gpio_init_in( QB20_EVK_K1, BSP_GPIO_PULL_MODE_NONE, BSP_GPIO_IRQ_MODE_FALLING, &qb20_evk_k1 );
+    hal_gpio_init_in( QB20_EVK_K2, BSP_GPIO_PULL_MODE_NONE, BSP_GPIO_IRQ_MODE_FALLING, &qb20_evk_k2 );
 
     // Init done: enable interruption
     hal_mcu_enable_irq( );
@@ -1945,13 +1970,12 @@ void main_periodical_uplink( void )
 
     while( 1 )
     {
+        smtc_modem_get_status( STACK_ID, &status_mask );
         // Check button
-        if( user_button_is_press == true )
+        if( k1_button_is_press == true )
         {
-            user_button_is_press = false;
+            k1_button_is_press = false;
 
-            smtc_modem_status_mask_t status_mask = 0;
-            smtc_modem_get_status( STACK_ID, &status_mask );
             // Check if the device has already joined a network
             if( ( status_mask & SMTC_MODEM_STATUS_JOINED ) == SMTC_MODEM_STATUS_JOINED )
             {
@@ -1960,12 +1984,17 @@ void main_periodical_uplink( void )
             }
         }
 
+        // if ( k2_button_is_press == false && ( status_mask & SMTC_MODEM_STATUS_JOINING ) == SMTC_MODEM_STATUS_JOINING ) {
+        //     goto sleep;
+        // }
+
         // Modem process launch
         sleep_time_ms = smtc_modem_run_engine( );
 
+sleep:
         // Atomically check sleep conditions (button was not pressed and no modem flags pending)
         hal_mcu_disable_irq( );
-        if( ( user_button_is_press == false ) && ( smtc_modem_is_irq_flag_pending( ) == false ) )
+        if( ( k1_button_is_press == false ) && ( smtc_modem_is_irq_flag_pending( ) == false ) )
         {
             hal_watchdog_reload( );
             hal_mcu_set_sleep_for_ms( MIN( sleep_time_ms, WATCHDOG_RELOAD_PERIOD_MS ) );
@@ -2012,12 +2041,12 @@ void main_lctt_certif(void)
     smtc_modem_init( &modem_event_callback );
 
     // Configure Nucleo blue button as EXTI
-    hal_gpio_irq_t nucleo_blue_button = {
-        .pin      = EXTI_BUTTON,
+    hal_gpio_irq_t qb20_evk_k1 = {
+        .pin      = QB20_EVK_K1,
         .context  = NULL,                  // context pass to the callback - not used in this example
-        .callback = user_button_callback,  // callback called when EXTI is triggered
+        .callback = k1_button_callback,  // callback called when EXTI is triggered
     };
-    hal_gpio_init_in( EXTI_BUTTON, BSP_GPIO_PULL_MODE_NONE, BSP_GPIO_IRQ_MODE_FALLING, &nucleo_blue_button );
+    hal_gpio_init_in( QB20_EVK_K1, BSP_GPIO_PULL_MODE_NONE, BSP_GPIO_IRQ_MODE_FALLING, &qb20_evk_k1 );
 
     // Init done: enable interruption
     hal_mcu_enable_irq( );
@@ -2028,9 +2057,9 @@ void main_lctt_certif(void)
     while( 1 )
     {
         // Check button
-        if( user_button_is_press == true )
+        if( k1_button_is_press == true )
         {
-            user_button_is_press = false;
+            k1_button_is_press = false;
 
             main_handle_push_button( );
         }
@@ -2040,7 +2069,7 @@ void main_lctt_certif(void)
 
         // Atomically check sleep conditions (button was not pressed)
         hal_mcu_disable_irq( );
-        if( ( user_button_is_press == false ) && ( smtc_modem_is_irq_flag_pending( ) == false ) )
+        if( ( k1_button_is_press == false ) && ( smtc_modem_is_irq_flag_pending( ) == false ) )
         {
             hal_watchdog_reload( );
             hal_mcu_set_sleep_for_ms( MIN( sleep_time_ms, WATCHDOG_RELOAD_PERIOD_MS ) );

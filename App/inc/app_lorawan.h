@@ -42,7 +42,7 @@ extern "C" {
 /**
  * @brief Modem Region define
  */
-#define MODEM_EXAMPLE_REGION SMTC_MODEM_REGION_AU_915
+#define MODEM_EXAMPLE_REGION SMTC_MODEM_REGION_EU_868
 
 void main_porting_tests( void );
 
